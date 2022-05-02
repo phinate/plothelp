@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__all__ = ("autoplot",)
+
 from typing import Any, Callable, Iterable, Sequence
 
 import matplotlib.pyplot as plt
@@ -60,6 +62,8 @@ def autoplot(
         figsize=[plots_per_row * figsize_scale, rows * figsize_scale],
         facecolor="w",
     )
+    if subplot_kwargs is None:
+        subplot_kwargs = {}
     fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, dpi=120, **subplot_kwargs)
 
     row = 0
