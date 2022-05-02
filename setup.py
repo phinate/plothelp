@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2022, Nathan 
+# Copyright (c) 2022, Nathan
 #
 # Distributed under the 3-clause BSD license, see accompanying file LICENSE
 # or https://github.com/phinate/plothelp for details.

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable, Any
+from typing import Any, Callable, Iterable, Sequence
+
 import matplotlib.pyplot as plt
 
 
 def autoplot(
-    data: Any,
-    plot_func: Callable,
-    subplot_kwargs: dict = None,
+    data: Sequence[Any],
+    plot_func: Callable[[Any, Iterable[Any], int], None],
+    subplot_kwargs: dict[str, Any] | None = None,
     title: str | None = None,
     plots_per_row: int | None = None,
     figsize_scale: float = 2.0,
@@ -46,7 +47,7 @@ def autoplot(
             if i < 10:
                 plots_per_row = i
             else:
-                plots_per_row = max(rem_dict, key=rem_dict.get)  # type: ignore
+                plots_per_row = max(rem_dict, key=rem_dict.get)  # type: ignore[arg-type]
                 # (https://github.com/python/mypy/issues/6692) ?
 
     rem = length % plots_per_row
