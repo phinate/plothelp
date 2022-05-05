@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 def autoplot(
     data: Sequence[Any],
     plot_func: Callable[[Any, Iterable[Any], int], None],
-    *,
     plot_func_kwargs: dict[str, Any] | None = None,
     subplot_kwargs: dict[str, Any] | None = None,
     title: str | None = None,
