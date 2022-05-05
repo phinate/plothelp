@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 def autoplot(
     data: Sequence[Any],
     plot_func: Callable[[Any, Iterable[Any], int], None],
+    *,
+    plot_func_kwargs: dict[str, Any] | None = None,
     subplot_kwargs: dict[str, Any] | None = None,
     title: str | None = None,
     plots_per_row: int | None = None,
@@ -64,25 +66,29 @@ def autoplot(
     )
     if subplot_kwargs is None:
         subplot_kwargs = {}
+    if plot_func_kwargs is None:
+        plot_func_kwargs = {}
+
     fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, dpi=120, **subplot_kwargs)
 
     row = 0
     column = 0
-
+    axes_ravel = axes.ravel()
     for i, datum in enumerate(data):
         if i % plots_per_row == 0 and i != 0:
             row += 1
             column -= plots_per_row
 
         # plotting callback
-        ax = axes[row, column]
-        plot_func(ax, datum, i)
+        ax = axes_ravel[i]
+        plot_func(ax, datum, i, **plot_func_kwargs)
 
         column += 1
 
-    while column % plots_per_row != 0:
-        fig.delaxes(axes[row, column])
-        column += 1
+    if rows > 1:
+        while column % plots_per_row != 0:
+            fig.delaxes(axes[row, column])
+            column += 1
     if title is not None:
         plt.suptitle(title)
     plt.tight_layout()
