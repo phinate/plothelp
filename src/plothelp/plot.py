@@ -21,8 +21,11 @@ def autoplot(
 
     Args:
         data: An iterable set of data to visualize.
-        plot_func: A function that takes a single data element, the current index, and
-            the current axis, then modifies the axis in place.
+        plot_func: A function that takes a single data element, the current axis, and
+            the current index, then modifies the axis in place. The function should
+            not return anything (it won't be used). Also optionally takes extra
+            keyword arguments that are unpacked from the `plot_func_kwargs` dict.
+        plot_func_kwargs: A dictionary of keyword arguments to pass to `plot_func`.
         subplot_kwargs: Keyword arguments to pass to `plt.subplots`.
         title: Title to use for the figure.
         plots_per_row: Number of plots to show per row (if None, will attempt to
