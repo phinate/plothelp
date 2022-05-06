@@ -23,14 +23,14 @@ def linear_fade_2D(
     c1: color, c2: color, c3: color, c4: color, grid_size: tuple[int, int]
 ) -> jnp.ndarray:
     start = jnp.array(to_rgb(c1))
-    end = jnp.array(to_rgb(c2))
+    end = jnp.array(to_rgb(c3))
     across = grid_size[0]
     interp = vmap(partial(jnp.linspace, num=across))
-    res1 = interp(start, end).T
-    start = jnp.array(to_rgb(c3))
+    res1 = interp(start, end)
+    start = jnp.array(to_rgb(c2))
     end = jnp.array(to_rgb(c4))
-    res2 = interp(start, end).T
+    res2 = interp(start, end)
     down = grid_size[1]
     # interpolate between res1 and res2 along the down axis
     interp = vmap(partial(jnp.linspace, num=down))
-    return interp(res1, res2)
+    return interp(res1, res2).T
