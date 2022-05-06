@@ -1,27 +1,32 @@
 from __future__ import annotations
 
-__all__ = ("autoplot",)
+__all__ = ("autogrid",)
 
 from typing import Any, Callable, Iterable, Sequence
 
 import matplotlib.pyplot as plt
 
 
-def autoplot(
+def autogrid(
     data: Sequence[Any],
     plot_func: Callable[[Any, Iterable[Any], int], None],
+    plot_func_kwargs: dict[str, Any] | None = None,
     subplot_kwargs: dict[str, Any] | None = None,
     title: str | None = None,
     plots_per_row: int | None = None,
     figsize_scale: float = 2.0,
     outfile_name: str | None = None,
+    tight_layout: bool = True,
 ) -> plt.Figure:
     """Utility function to visualize `plot_func` over an iterable set of `data`.
 
     Args:
         data: An iterable set of data to visualize.
-        plot_func: A function that takes a single data element, the current index, and
-            the current axis, then modifies the axis in place.
+        plot_func: A function that takes a single data element, the current axis, and
+            the current index, then modifies the axis in place. The function should
+            not return anything (it won't be used). Also optionally takes extra
+            keyword arguments that are unpacked from the `plot_func_kwargs` dict.
+        plot_func_kwargs: A dictionary of keyword arguments to pass to `plot_func`.
         subplot_kwargs: Keyword arguments to pass to `plt.subplots`.
         title: Title to use for the figure.
         plots_per_row: Number of plots to show per row (if None, will attempt to
@@ -64,28 +69,36 @@ def autoplot(
     )
     if subplot_kwargs is None:
         subplot_kwargs = {}
+    if plot_func_kwargs is None:
+        plot_func_kwargs = {}
+
     fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, dpi=120, **subplot_kwargs)
 
     row = 0
     column = 0
-
+    axes_ravel = axes.ravel()
     for i, datum in enumerate(data):
         if i % plots_per_row == 0 and i != 0:
             row += 1
             column -= plots_per_row
 
         # plotting callback
-        ax = axes[row, column]
-        plot_func(ax, datum, i)
+        ax = axes_ravel[i]
+        plot_func(ax, datum, i, **plot_func_kwargs)
 
         column += 1
 
-    while column % plots_per_row != 0:
-        fig.delaxes(axes[row, column])
-        column += 1
+    if rows > 1:
+        while column % plots_per_row != 0:
+            fig.delaxes(axes[row, column])
+            column += 1
     if title is not None:
         plt.suptitle(title)
-    plt.tight_layout()
-    if outfile_name is not None:
-        plt.savefig(outfile_name, bbox_inches="tight")
+    if tight_layout:
+        plt.tight_layout()
+        if outfile_name is not None:
+            plt.savefig(outfile_name, bbox_inches="tight")
+    else:
+        if outfile_name is not None:
+            plt.savefig(outfile_name)
     return fig
