@@ -9,7 +9,7 @@ def test_autoplot():
     def plot_func(ax, data, i):
         ax.plot(data, i)
 
-    plothelp.autoplot(
+    plothelp.autogrid(
         data,
         plot_func=plot_func,
         title="Test",
