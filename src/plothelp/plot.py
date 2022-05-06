@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-__all__ = ("autoplot",)
+__all__ = ("autogrid",)
 
 from typing import Any, Callable, Iterable, Sequence
 
 import matplotlib.pyplot as plt
 
 
-def autoplot(
+def autogrid(
     data: Sequence[Any],
     plot_func: Callable[[Any, Iterable[Any], int], None],
     plot_func_kwargs: dict[str, Any] | None = None,
@@ -16,6 +16,7 @@ def autoplot(
     plots_per_row: int | None = None,
     figsize_scale: float = 2.0,
     outfile_name: str | None = None,
+    tight_layout: bool = True,
 ) -> plt.Figure:
     """Utility function to visualize `plot_func` over an iterable set of `data`.
 
@@ -93,7 +94,11 @@ def autoplot(
             column += 1
     if title is not None:
         plt.suptitle(title)
-    plt.tight_layout()
-    if outfile_name is not None:
-        plt.savefig(outfile_name, bbox_inches="tight")
+    if tight_layout:
+        plt.tight_layout()
+        if outfile_name is not None:
+            plt.savefig(outfile_name, bbox_inches="tight")
+    else:
+        if outfile_name is not None:
+            plt.savefig(outfile_name)
     return fig
