@@ -6,7 +6,11 @@ import plothelp
 def test_autoplot():
     data = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 
-    def plot_func(ax, data, i):
+    def plot_func(settings):
+        ax = settings["ax"]
+        data = settings["data"]
+        i = settings["i"]
+        data
         ax.plot(data, i)
 
     plothelp.autogrid(
