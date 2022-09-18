@@ -2,14 +2,19 @@ from __future__ import annotations
 
 __all__ = ("autogrid",)
 
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Protocol, Sequence
 
 import matplotlib.pyplot as plt
 
 
+class PlotCallable(Protocol):
+    def __call__(self, current_plot: dict[str, Any], *args: Any, **kwargs: Any) -> None:
+        ...
+
+
 def autogrid(
     data: Sequence[Any],
-    plot_func: Callable[[Any, Iterable[Any], int], None],
+    plot_func: PlotCallable,
     plot_func_kwargs: dict[str, Any] | None = None,
     subplot_kwargs: dict[str, Any] | None = None,
     title: str | None = None,
@@ -22,10 +27,12 @@ def autogrid(
 
     Args:
         data: An iterable set of data to visualize.
-        plot_func: A function that takes a single data element, the current axis, and
-            the current index, then modifies the axis in place. The function should
-            not return anything (it won't be used). Also optionally takes extra
-            keyword arguments that are unpacked from the `plot_func_kwargs` dict.
+        plot_func: A function that takes a `dict` as the first arg, which contains the
+            current data element `"data"`, the current axis `"ax"`, and the current
+            index `"i"`, then modifies the axis in place. The function should not
+            return anything (it won't be used even if so).
+            Also optionally takes extra keyword arguments that are unpacked from the
+            `plot_func_kwargs` dict.
         plot_func_kwargs: A dictionary of keyword arguments to pass to `plot_func`.
         subplot_kwargs: Keyword arguments to pass to `plt.subplots`.
         title: Title to use for the figure.
@@ -62,17 +69,19 @@ def autogrid(
         rows = int(length / plots_per_row)
     else:
         rows = int(length / plots_per_row) + 1
-    plt.rc(
-        "figure",
-        figsize=[plots_per_row * figsize_scale, rows * figsize_scale],
-        facecolor="w",
-    )
     if subplot_kwargs is None:
         subplot_kwargs = {}
     if plot_func_kwargs is None:
         plot_func_kwargs = {}
 
-    fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, dpi=120, **subplot_kwargs)
+    if "figsize" not in subplot_kwargs:
+        subplot_kwargs["figsize"] = [
+            plots_per_row * figsize_scale,
+            rows * figsize_scale,
+        ]
+    if "dpi" not in subplot_kwargs:
+        subplot_kwargs["dpi"] = 120
+    fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, **subplot_kwargs)
 
     row = 0
     column = 0
@@ -84,7 +93,7 @@ def autogrid(
 
         # plotting callback
         ax = axes_ravel[i]
-        plot_func(ax, datum, i, **plot_func_kwargs)
+        plot_func(dict(ax=ax, data=datum, i=i), **plot_func_kwargs)
 
         column += 1
 
