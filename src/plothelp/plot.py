@@ -28,6 +28,7 @@ def autogrid(
     figsize_scale: float = 2.0,
     outfile_name: str | None = None,
     tight_layout: bool = True,
+    flip_size: bool = False,
 ) -> plt.Figure:
     """Utility function to visualize `plot_func` over an iterable set of `data`.
 
@@ -81,13 +82,23 @@ def autogrid(
         plot_func_kwargs = {}
 
     if "figsize" not in subplot_kwargs:
-        subplot_kwargs["figsize"] = [
-            plots_per_row * figsize_scale,
-            rows * figsize_scale,
-        ]
+        if flip_size:
+            subplot_kwargs["figsize"] = [
+                rows * figsize_scale,
+                plots_per_row * figsize_scale,
+            ]
+        else:
+            subplot_kwargs["figsize"] = [
+                plots_per_row * figsize_scale,
+                rows * figsize_scale,
+            ]
     if "dpi" not in subplot_kwargs:
         subplot_kwargs["dpi"] = 120
-    fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, **subplot_kwargs)
+
+    if flip_size:
+        fig, axes = plt.subplots(nrows=plots_per_row, ncols=rows, **subplot_kwargs)
+    else:
+        fig, axes = plt.subplots(nrows=rows, ncols=plots_per_row, **subplot_kwargs)
 
     row = 0
     column = 0
