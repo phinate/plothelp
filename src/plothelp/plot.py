@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ("autogrid",)
 
+import sys
 from typing import Any, Sequence
 
 if sys.version_info < (3, 8):
