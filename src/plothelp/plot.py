@@ -2,7 +2,12 @@ from __future__ import annotations
 
 __all__ = ("autogrid",)
 
-from typing import Any, Protocol, Sequence
+from typing import Any, Sequence
+
+if sys.version_info < (3, 8):
+    from typing_extensions import Protocol
+else:
+    from typing import Protocol
 
 import matplotlib.pyplot as plt
 
